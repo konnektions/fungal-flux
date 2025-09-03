@@ -100,7 +100,7 @@ export default function Footer({ onNavigate }: FooterProps) {
 
         <div className="border-t border-gray-700 mt-8 pt-6 text-center">
           <p className="text-gray-400 text-sm">
-            &copy; 2024 Fungal Flux. All rights reserved. | Cultivating excellence, one mushroom at a time.
+            &copy; 2025 Fungal Flux. All rights reserved. | Cultivating excellence, one mushroom at a time.
           </p>
         </div>
       </div>
