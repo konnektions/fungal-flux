@@ -9,6 +9,8 @@ import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import GrowingGuidesPage from './pages/GrowingGuidesPage';
+import ShippingInfoPage from './pages/ShippingInfoPage';
 import { Product } from './types';
 
 function App() {
@@ -75,6 +77,8 @@ function AppContent({
             <Route path="/shop" element={<ShopPage onProductClick={handleProductClick} />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/growing-guides" element={<GrowingGuidesPage />} />
+            <Route path="/shipping-info" element={<ShippingInfoPage />} />
           </Routes>
         </main>
 

@@ -79,20 +79,20 @@ export default function Footer({ onNavigate }: FooterProps) {
                 </button>
               </li>
               <li>
-                <a 
-                  href="#"
+                <button
+                  onClick={() => onNavigate('growing-guides')}
                   className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
                 >
                   Growing Guides
-                </a>
+                </button>
               </li>
               <li>
-                <a 
-                  href="#"
+                <button
+                  onClick={() => onNavigate('shipping-info')}
                   className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
                 >
                   Shipping Info
-                </a>
+                </button>
               </li>
             </ul>
           </div>
