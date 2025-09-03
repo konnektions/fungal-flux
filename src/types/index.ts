@@ -2,7 +2,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;
+  image: string; // Note: changed from image_url for consistency
   category: 'grow-kits' | 'liquid-cultures' | 'supplies';
   description: string;
   inStock: boolean;
@@ -12,6 +12,13 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
 }
 
 export interface CartContextType {
