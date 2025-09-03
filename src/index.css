@@ -6,3 +6,11 @@
 body {
   background-color: #e2e2e2 !important;
 }
+
+/* Add this at the end of src/index.css */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
