@@ -2,7 +2,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  image: string; // Note: changed from image_url for consistency
+  image: string; // We'll use this field in our app, but map from image_url from Supabase
   category: 'grow-kits' | 'liquid-cultures' | 'supplies';
   description: string;
   inStock: boolean;
