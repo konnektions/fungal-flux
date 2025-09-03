@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, Loader2, AlertCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { Product } from '../types';
+import { Product, DBProduct } from '../types';
 import { supabase } from '../lib/supabase';
 
 interface ShopPageProps {
@@ -57,7 +57,7 @@ export default function ShopPage({ onProductClick }: ShopPageProps) {
   };
 
   // Transform database product to app product format
-  const transformProduct = (dbProduct: any): Product => ({
+  const transformProduct = (dbProduct: DBProduct): Product => ({
     id: dbProduct.id,
     name: dbProduct.name,
     price: parseFloat(dbProduct.price),

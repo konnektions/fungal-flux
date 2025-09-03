@@ -9,6 +9,20 @@ export interface Product {
   featured?: boolean;
 }
 
+// Represents the structure of a product directly from the database
+export interface DBProduct {
+  id: string;
+  name: string;
+  price: string; // Comes as string from DB
+  image_url: string | null;
+  category: 'grow-kits' | 'liquid-cultures' | 'supplies';
+  description: string | null;
+  in_stock: boolean;
+  stock_quantity: number;
+  featured: boolean;
+  created_at: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;

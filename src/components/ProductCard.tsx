@@ -32,7 +32,7 @@ export default function ProductCard({ product, onProductClick }: ProductCardProp
           onError={(e) => {
             // Fallback for broken images
             const target = e.target as HTMLImageElement;
-            target.src = 'https://images.pexels.com/photos/5966630/pexels-photo-5966630.jpeg?auto=compress&cs=tinysrgb&w=400';
+            target.src = '/placeholder-mushroom.jpg';
           }}
         />
         {!product.inStock && (

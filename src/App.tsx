@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,56 +12,79 @@ import ContactPage from './pages/ContactPage';
 import { Product } from './types';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-
-  const handleNavigate = (page: string) => {
-    setCurrentPage(page);
-    window.scrollTo(0, 0);
-  };
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setIsProductModalOpen(true);
   };
 
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <HomePage onNavigate={handleNavigate} onProductClick={handleProductClick} />;
-      case 'shop':
-        return <ShopPage onProductClick={handleProductClick} />;
-      case 'about':
-        return <AboutPage />;
-      case 'contact':
-        return <ContactPage />;
-      default:
-        return <HomePage onNavigate={handleNavigate} onProductClick={handleProductClick} />;
-    }
+  return (
+    <Router>
+      <AppContent
+        isCartOpen={isCartOpen}
+        setIsCartOpen={setIsCartOpen}
+        selectedProduct={selectedProduct}
+        setSelectedProduct={setSelectedProduct}
+        isProductModalOpen={isProductModalOpen}
+        setIsProductModalOpen={setIsProductModalOpen}
+        handleProductClick={handleProductClick}
+      />
+    </Router>
+  );
+}
+
+function AppContent({
+  isCartOpen,
+  setIsCartOpen,
+  selectedProduct,
+  setSelectedProduct,
+  isProductModalOpen,
+  setIsProductModalOpen,
+  handleProductClick,
+}: {
+  isCartOpen: boolean;
+  setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedProduct: Product | null;
+  setSelectedProduct: React.Dispatch<React.SetStateAction<Product | null>>;
+  isProductModalOpen: boolean;
+  setIsProductModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleProductClick: (product: Product) => void;
+}) {
+  const navigate = useNavigate();
+
+  const handleNavigate = (page: string) => {
+    navigate(page === 'home' ? '/' : `/${page}`);
+    window.scrollTo(0, 0);
   };
 
   return (
     <CartProvider>
       <div className="min-h-screen bg-white">
-        <Header 
-          currentPage={currentPage} 
+        <Header
+          currentPage={location.pathname}
           onNavigate={handleNavigate}
           onCartOpen={() => setIsCartOpen(true)}
         />
-        
+
         <main>
-          {renderCurrentPage()}
+          <Routes>
+            <Route path="/" element={<HomePage onNavigate={handleNavigate} onProductClick={handleProductClick} />} />
+            <Route path="/shop" element={<ShopPage onProductClick={handleProductClick} />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Routes>
         </main>
-        
+
         <Footer onNavigate={handleNavigate} />
-        
-        <Cart 
-          isOpen={isCartOpen} 
-          onClose={() => setIsCartOpen(false)} 
+
+        <Cart
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
         />
-        
+
         <ProductModal
           product={selectedProduct}
           isOpen={isProductModalOpen}
