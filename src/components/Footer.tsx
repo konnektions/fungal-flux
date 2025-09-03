@@ -1,7 +1,8 @@
 import React from 'react';
+import { categories } from '../data/categories';
 
 interface FooterProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, category?: string) => void;
 }
 
 export default function Footer({ onNavigate }: FooterProps) {
@@ -31,30 +32,16 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div>
             <h4 className="font-semibold text-white mb-4">Shop</h4>
             <ul className="space-y-2">
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Liquid Cultures
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Grow Kits
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Growing Supplies
-                </button>
-              </li>
+              {categories.filter(c => c.id !== 'all').map(category => (
+                <li key={category.id}>
+                  <button
+                    onClick={() => onNavigate('shop', category.id)}
+                    className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
+                  >
+                    {category.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 

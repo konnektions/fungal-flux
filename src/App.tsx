@@ -57,8 +57,12 @@ function AppContent({
 }) {
   const navigate = useNavigate();
 
-  const handleNavigate = (page: string) => {
-    navigate(page === 'home' ? '/' : `/${page}`);
+  const handleNavigate = (page: string, category?: string) => {
+    if (page === 'shop' && category) {
+      navigate(`/shop?category=${category}`);
+    } else {
+      navigate(page === 'home' ? '/' : `/${page}`);
+    }
     window.scrollTo(0, 0);
   };
 

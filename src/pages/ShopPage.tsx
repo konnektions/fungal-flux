@@ -1,27 +1,33 @@
 // src/pages/ShopPage.tsx - Updated for Supabase
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Filter, Loader2, AlertCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { Product, DBProduct } from '../types';
 import { supabase } from '../lib/supabase';
+import { categories } from '../data/categories';
 
 interface ShopPageProps {
   onProductClick: (product: Product) => void;
 }
 
 export default function ShopPage({ onProductClick }: ShopPageProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    searchParams.get('category') || 'all'
+  );
   const [showFilters, setShowFilters] = useState(false);
 
-  const categories = [
-    { id: 'all', label: 'All Products' },
-    { id: 'grow-kits', label: 'Grow Kits' },
-    { id: 'liquid-cultures', label: 'Liquid Cultures' },
-    { id: 'supplies', label: 'Growing Supplies' }
-  ];
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category') || 'all';
+    if (categoryFromUrl !== selectedCategory) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams, selectedCategory]);
 
   useEffect(() => {
     loadProducts();
@@ -119,7 +125,14 @@ export default function ShopPage({ onProductClick }: ShopPageProps) {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
+                    if (category.id === 'all') {
+                      setSearchParams({});
+                    } else {
+                      setSearchParams({ category: category.id });
+                    }
+                  }}
                   disabled={loading}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${
                     selectedCategory === category.id
