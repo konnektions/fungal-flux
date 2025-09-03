@@ -5,12 +5,18 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
 import ProductModal from './components/ProductModal';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminLayout from './components/admin/AdminLayout';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import GrowingGuidesPage from './pages/GrowingGuidesPage';
 import ShippingInfoPage from './pages/ShippingInfoPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProducts from './pages/admin/AdminProducts';
 import { Product } from './types';
 
 function App() {
@@ -77,12 +83,28 @@ function AppContent({
 
         <main>
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<HomePage onNavigate={handleNavigate} onProductClick={handleProductClick} />} />
             <Route path="/shop" element={<ShopPage onProductClick={handleProductClick} />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/growing-guides" element={<GrowingGuidesPage />} />
             <Route path="/shipping-info" element={<ShippingInfoPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            
+            {/* Admin routes */}
+            <Route path="/admin/*" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <Routes>
+                    <Route path="" element={<AdminDashboard />} />
+                    <Route path="products" element={<AdminProducts />} />
+                    {/* Add more admin routes here */}
+                  </Routes>
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
 
