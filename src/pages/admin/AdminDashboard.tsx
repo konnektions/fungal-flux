@@ -1,48 +1,44 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Settings, 
+import { useDashboardStats } from '../../hooks/useDashboardStats';
+import {
+  Package,
   BarChart3,
   AlertTriangle,
   TrendingUp,
-  Eye
+  Eye,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const { totalProducts, lowStockCount, outOfStockCount, featuredCount, loading, error, refetch } = useDashboardStats();
 
   const stats = [
     {
       title: 'Total Products',
-      value: '127',
-      change: '+12%',
-      trend: 'up',
-      icon: Package
+      value: totalProducts,
+      icon: Package,
+      urgent: false
     },
     {
       title: 'Low Stock Items',
-      value: '8',
-      change: '-3 from yesterday',
-      trend: 'down',
+      value: lowStockCount,
       icon: AlertTriangle,
-      urgent: true
+      urgent: lowStockCount > 0
     },
     {
-      title: 'Orders Today',
-      value: '24',
-      change: '+18%',
-      trend: 'up',
-      icon: ShoppingCart
+      title: 'Out of Stock',
+      value: outOfStockCount,
+      icon: Package,
+      urgent: outOfStockCount > 0
     },
     {
-      title: 'Revenue This Month',
-      value: '$12,450',
-      change: '+23%',
-      trend: 'up',
-      icon: TrendingUp
+      title: 'Featured Products',
+      value: featuredCount,
+      icon: TrendingUp,
+      urgent: false
     }
   ];
 
@@ -89,45 +85,83 @@ export default function AdminDashboard() {
         </p>
       </div>
 
+      {/* Error Banner */}
+      {error && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-red-800 mb-1">
+                Failed to load dashboard statistics
+              </h3>
+              <p className="text-sm text-red-700 mb-3">
+                {error}
+              </p>
+              <button
+                onClick={refetch}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.title} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {stat.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                  <p className={`text-sm mt-2 ${
-                    stat.urgent 
-                      ? 'text-yellow-600' 
-                      : stat.trend === 'up' 
-                        ? 'text-green-600' 
-                        : 'text-gray-500'
-                  }`}>
-                    {stat.change}
-                  </p>
-                </div>
-                <div className={`p-3 rounded-full ${
-                  stat.urgent 
-                    ? 'bg-yellow-100' 
-                    : 'bg-gray-100'
-                }`}>
-                  <Icon className={`w-6 h-6 ${
-                    stat.urgent 
-                      ? 'text-yellow-600' 
-                      : 'text-gray-600'
-                  }`} />
+        {loading ? (
+          // Loading Skeleton
+          <>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
+                    <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+                  </div>
+                  <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            ))}
+          </>
+        ) : !error ? (
+          // Actual Stats
+          stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.title} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {stat.value}
+                    </p>
+                    {stat.urgent && (
+                      <p className="text-sm mt-2 text-yellow-600 font-medium">
+                        Needs attention
+                      </p>
+                    )}
+                  </div>
+                  <div className={`p-3 rounded-full ${
+                    stat.urgent 
+                      ? 'bg-yellow-100' 
+                      : 'bg-gray-100'
+                  }`}>
+                    <Icon className={`w-6 h-6 ${
+                      stat.urgent 
+                        ? 'text-yellow-600' 
+                        : 'text-gray-600'
+                    }`} />
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : null}
       </div>
 
       {/* Quick Actions */}

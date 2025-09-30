@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  MoreVertical,
+import {
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   Package,
   AlertCircle,
   Loader2
@@ -15,6 +13,8 @@ import {
 import { Product, DBProduct } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { categories } from '../../data/categories';
+import { useProducts } from '../../hooks/useProducts';
+import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,6 +23,11 @@ export default function AdminProducts() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const { deleteProduct } = useProducts();
 
   useEffect(() => {
     loadProducts();
@@ -96,6 +101,31 @@ export default function AdminProducts() {
   const getStockStatusText = (product: Product) => {
     if (!product.inStock) return 'Out of Stock';
     return 'In Stock';
+  };
+
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete({ id: product.id, name: product.name });
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!productToDelete) return;
+
+    setIsDeleting(true);
+    const result = await deleteProduct(productToDelete.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      setIsDeleteModalOpen(false);
+      setProductToDelete(null);
+      // Refresh the product list
+      await loadProducts();
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setProductToDelete(null);
   };
 
   if (loading) {
@@ -302,6 +332,7 @@ export default function AdminProducts() {
                         <Edit className="w-4 h-4" />
                       </Link>
                       <button
+                        onClick={() => handleDeleteClick(product)}
                         className="text-gray-400 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
@@ -337,6 +368,17 @@ export default function AdminProducts() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        title="Delete Product?"
+        message={`Are you sure you want to delete '${productToDelete?.name}'? This action cannot be undone.`}
+        confirmText="Delete Product"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        loading={isDeleting}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ export function useAuth() {
   // Helper function to get user profile with role
   const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
+      console.log('[AUTH] Fetching profile for user:', userId)
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -19,23 +20,26 @@ export function useAuth() {
         .single()
       
       if (error) {
-        console.error('Error fetching user profile:', error)
+        console.error('[AUTH] Error fetching user profile:', error)
         return null
       }
       
+      console.log('[AUTH] Profile fetched successfully:', data)
       return data
     } catch (error) {
-      console.error('Error fetching user profile:', error)
+      console.error('[AUTH] Exception fetching user profile:', error)
       return null
     }
   }
 
   // Helper function to set user with role
   const setUserWithRole = async (supabaseUser: SupabaseUser | null) => {
+    console.log('[AUTH] setUserWithRole called with user:', supabaseUser?.id)
     if (supabaseUser) {
       const profile = await getUserProfile(supabaseUser.id)
       const role = profile?.role || 'customer'
       
+      console.log('[AUTH] Setting user with role:', role)
       setUser({
         id: supabaseUser.id,
         email: supabaseUser.email || '',
@@ -44,17 +48,22 @@ export function useAuth() {
         role
       })
       setUserRole(role)
+      console.log('[AUTH] User state updated')
     } else {
+      console.log('[AUTH] Clearing user state')
       setUser(null)
       setUserRole('customer')
     }
   }
 
   useEffect(() => {
+    console.log('[AUTH] useEffect - Initializing auth')
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[AUTH] Initial session:', session?.user?.id)
       setSession(session)
       setUserWithRole(session?.user ?? null).then(() => {
+        console.log('[AUTH] Initial auth setup complete')
         setLoading(false)
       })
     })
@@ -62,6 +71,7 @@ export function useAuth() {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[AUTH] Auth state changed:', event, 'User:', session?.user?.id)
         setSession(session)
         await setUserWithRole(session?.user ?? null)
         setLoading(false)
@@ -85,10 +95,12 @@ export function useAuth() {
   }
 
   const signIn = async (email: string, password: string) => {
+    console.log('[AUTH] signIn called for:', email)
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
+    console.log('[AUTH] signIn result:', error ? 'ERROR' : 'SUCCESS', error?.message)
     return { data, error }
   }
 

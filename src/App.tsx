@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
+import Toast from './components/Toast';
 import ProductModal from './components/ProductModal';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
@@ -17,6 +19,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
+import AdminProductForm from './pages/admin/AdminProductForm';
 import { Product } from './types';
 
 function App() {
@@ -31,15 +34,17 @@ function App() {
 
   return (
     <Router>
-      <AppContent
-        isCartOpen={isCartOpen}
-        setIsCartOpen={setIsCartOpen}
-        selectedProduct={selectedProduct}
-        setSelectedProduct={setSelectedProduct}
-        isProductModalOpen={isProductModalOpen}
-        setIsProductModalOpen={setIsProductModalOpen}
-        handleProductClick={handleProductClick}
-      />
+      <ToastProvider>
+        <AppContent
+          isCartOpen={isCartOpen}
+          setIsCartOpen={setIsCartOpen}
+          selectedProduct={selectedProduct}
+          setSelectedProduct={setSelectedProduct}
+          isProductModalOpen={isProductModalOpen}
+          setIsProductModalOpen={setIsProductModalOpen}
+          handleProductClick={handleProductClick}
+        />
+      </ToastProvider>
     </Router>
   );
 }
@@ -100,7 +105,8 @@ function AppContent({
                   <Routes>
                     <Route path="" element={<AdminDashboard />} />
                     <Route path="products" element={<AdminProducts />} />
-                    {/* Add more admin routes here */}
+                    <Route path="products/add" element={<AdminProductForm />} />
+                    <Route path="products/:id/edit" element={<AdminProductForm />} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
@@ -123,6 +129,8 @@ function AppContent({
             setSelectedProduct(null);
           }}
         />
+
+        <Toast />
       </div>
     </CartProvider>
   );

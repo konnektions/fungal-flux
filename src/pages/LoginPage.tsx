@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-  const { signIn, loading } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +41,7 @@ export default function LoginPage() {
         navigate(returnTo);
       }, 100);
 
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
@@ -172,7 +172,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={isSubmitting || loading}
+                disabled={isSubmitting}
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#2D4A3E] hover:bg-[#4A6B5A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D4A3E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? (

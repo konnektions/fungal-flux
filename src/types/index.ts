@@ -57,3 +57,13 @@ export interface CartContextType {
   getTotalItems: () => number;
   getTotalPrice: () => number;
 }
+
+export interface ProductFormData {
+  name: string;
+  price: number;
+  category: 'grow-kits' | 'liquid-cultures' | 'supplies';
+  description: string;
+  stock_quantity: number;
+  featured: boolean;
+  image_url: string;
+}
