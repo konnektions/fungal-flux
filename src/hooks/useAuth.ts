@@ -72,9 +72,12 @@ export function useAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('[AUTH] Auth state changed:', event, 'User:', session?.user?.id)
-        setSession(session)
-        await setUserWithRole(session?.user ?? null)
-        setLoading(false)
+       setSession(session);
+       // Prevent infinite loop by checking if the user ID has changed
+      if (session?.user?.id !== user?.id) {
+        await setUserWithRole(session?.user ?? null);
+      }
+      setLoading(false);
       }
     )
 

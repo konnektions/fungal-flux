@@ -29,8 +29,9 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { error: signInError } = await signIn(formData.email, formData.password);
-      
+      const { error: signInError, data } = await signIn(formData.email, formData.password);
+      console.log('signIn result:', { signInError, data });
+
       if (signInError) {
         setError(signInError.message);
         return;
@@ -41,8 +42,14 @@ export default function LoginPage() {
         navigate(returnTo);
       }, 100);
 
-    } catch {
-      setError('An unexpected error occurred');
+    } catch (e) {
+      if (e instanceof Error) {
+        setError('An unexpected error occurred: ' + e.message);
+        console.error('Unexpected error:', e);
+      } else {
+        setError('An unexpected error occurred: ' + JSON.stringify(e));
+        console.error('Unexpected error:', e);
+      }
     } finally {
       setIsSubmitting(false);
     }
