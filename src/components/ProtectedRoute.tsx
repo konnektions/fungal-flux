@@ -14,7 +14,7 @@ export default function ProtectedRoute({
   requiredRole = 'customer',
   redirectTo = '/'
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isAdmin, isSuperAdmin, userRole, loading } = useAuth();
+  const { isAuthenticated, isAdmin, isSuperAdmin, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -48,12 +48,9 @@ export default function ProtectedRoute({
   };
 
   if (!hasPermission()) {
-    // Redirect to appropriate page based on user role
-    if (isAdmin) {
-      return <Navigate to="/admin" replace />;
-    } else {
-      return <Navigate to="/" replace />;
-    }
+    // If the user is authenticated but doesn't have the required role,
+    // redirect them to the specified page. This prevents potential redirect loops.
+    return <Navigate to={redirectTo} replace />;
   }
 
   return <>{children}</>;
