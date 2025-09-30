@@ -1,7 +1,8 @@
 import React from 'react';
+import { categories } from '../data/categories';
 
 interface FooterProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, category?: string) => void;
 }
 
 export default function Footer({ onNavigate }: FooterProps) {
@@ -31,30 +32,16 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div>
             <h4 className="font-semibold text-white mb-4">Shop</h4>
             <ul className="space-y-2">
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Liquid Cultures
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Grow Kits
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('shop')}
-                  className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
-                >
-                  Growing Supplies
-                </button>
-              </li>
+              {categories.filter(c => c.id !== 'all').map(category => (
+                <li key={category.id}>
+                  <button
+                    onClick={() => onNavigate('shop', category.id)}
+                    className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
+                  >
+                    {category.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -79,20 +66,20 @@ export default function Footer({ onNavigate }: FooterProps) {
                 </button>
               </li>
               <li>
-                <a 
-                  href="#"
+                <button
+                  onClick={() => onNavigate('growing-guides')}
                   className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
                 >
                   Growing Guides
-                </a>
+                </button>
               </li>
               <li>
-                <a 
-                  href="#"
+                <button
+                  onClick={() => onNavigate('shipping-info')}
                   className="text-gray-300 hover:text-[#8FA89E] transition-colors text-sm"
                 >
                   Shipping Info
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -100,7 +87,7 @@ export default function Footer({ onNavigate }: FooterProps) {
 
         <div className="border-t border-gray-700 mt-8 pt-6 text-center">
           <p className="text-gray-400 text-sm">
-            &copy; 2024 Fungal Flux. All rights reserved. | Cultivating excellence, one mushroom at a time.
+            &copy; 2025 Fungal Flux. All rights reserved. | Cultivating excellence, one mushroom at a time.
           </p>
         </div>
       </div>
