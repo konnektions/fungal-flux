@@ -11,12 +11,15 @@
     "db:types": "npx supabase gen types typescript --project-id wfjzuzkpngbmbunfixgb > src/types/database.types.ts"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^5.0.0",
+    "@stripe/stripe-js": "^8.0.0",
     "@supabase/supabase-js": "^2.57.0",
     "@types/react-router-dom": "",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.1"
+    "react-router-dom": "^6.30.1",
+    "stripe": "^17.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

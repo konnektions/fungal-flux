@@ -67,3 +67,57 @@ export interface ProductFormData {
   featured: boolean;
   image_url: string;
 }
+
+export interface AddressData {
+  fullName: string;
+  email: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface CheckoutFormData {
+  shippingAddress: AddressData;
+  billingAddress: AddressData;
+  useSameAsShipping: boolean;
+  orderNotes?: string;
+}
+
+export interface CheckoutStep {
+  id: number;
+  name: string;
+  completed: boolean;
+  current: boolean;
+}
+export interface Order {
+  id: string;
+  orderNumber: string;
+  createdAt: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  items: OrderItem[];
+  shippingAddress: AddressData;
+  billingAddress: AddressData;
+  paymentMethod: {
+    type: string;
+    last4: string;
+  };
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  estimatedDelivery?: string;
+  trackingNumber?: string;
+}
+
+export interface OrderItem {
+  productId: string;
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
+  total: number;
+}

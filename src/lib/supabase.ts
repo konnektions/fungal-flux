@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { demoProducts } from '../data/demoProducts'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -65,35 +66,50 @@ if (typeof window !== 'undefined') {
 // Helper functions unchanged...
 export const productService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-    
-    if (error) throw error
-    return data
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.warn('[productService.getAll] Falling back to demo products:', err instanceof Error ? err.message : err)
+      return demoProducts
+    }
   },
 
   async getFeatured() {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('featured', true)
-      .eq('in_stock', true)
-      .order('created_at', { ascending: false })
-    
-    if (error) throw error
-    return data
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('featured', true)
+        .eq('in_stock', true)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.warn('[productService.getFeatured] Falling back to demo products:', err instanceof Error ? err.message : err)
+      return demoProducts.filter(p => p.featured && p.in_stock)
+    }
   },
 
   async getByCategory(category: string) {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('category', category)
-      .order('created_at', { ascending: false })
-    
-    if (error) throw error
-    return data
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category', category)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.warn('[productService.getByCategory] Falling back to demo products:', err instanceof Error ? err.message : err)
+      return demoProducts.filter(p => p.category === category)
+    }
   }
 }

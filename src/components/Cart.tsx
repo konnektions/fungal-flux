@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 interface CartProps {
@@ -9,6 +10,7 @@ interface CartProps {
 
 export default function Cart({ isOpen, onClose }: CartProps) {
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
   const totalPrice = getTotalPrice();
 
   if (!isOpen) return null;
@@ -94,7 +96,13 @@ export default function Cart({ isOpen, onClose }: CartProps) {
               </div>
               
               <div className="space-y-2">
-                <button className="w-full bg-[#2D4A3E] text-white py-3 rounded-lg font-semibold hover:bg-[#4A6B5A] transition-colors">
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate('/checkout');
+                  }}
+                  className="w-full bg-[#2D4A3E] text-white py-3 rounded-lg font-semibold hover:bg-[#4A6B5A] transition-colors"
+                >
                   Checkout
                 </button>
                 

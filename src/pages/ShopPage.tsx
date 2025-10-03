@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Filter, Loader2, AlertCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { Product, DBProduct } from '../types';
-import { supabase } from '../lib/supabase';
+import { productService } from '../lib/supabase';
 import { categories } from '../data/categories';
 
 interface ShopPageProps {
@@ -38,21 +38,11 @@ export default function ShopPage({ onProductClick }: ShopPageProps) {
       setLoading(true);
       setError(null);
 
-      let query = supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const data =
+        selectedCategory === 'all'
+          ? await productService.getAll()
+          : await productService.getByCategory(selectedCategory);
 
-      // Filter by category if not 'all'
-      if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
-      }
-
-      const { data, error: fetchError } = await query;
-
-      if (fetchError) throw fetchError;
-
-      // Transform database products to app format
       const transformedProducts = data.map(transformProduct);
       setProducts(transformedProducts);
     } catch (err) {

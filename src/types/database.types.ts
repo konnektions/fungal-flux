@@ -88,6 +88,46 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      },
+      orders: {
+        Row: {
+          id: string
+          order_number: string
+          user_id: string | null
+          guest_email: string | null
+          status: "pending" | "processing" | "shipped" | "delivered" | "cancelled"
+          shipping_address: AddressData
+          billing_address: AddressData
+          subtotal: number
+          shipping_cost: number
+          tax_amount: number
+          total_amount: number
+          stripe_payment_intent_id: string | null
+          payment_status: "pending" | "completed" | "failed" | "refunded"
+          payment_method_last4: string | null
+          estimated_delivery_date: string | null
+          tracking_number: string | null
+          order_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database["public"]["Tables"]["orders"]["Row"], "id" | "created_at" | "updated_at">
+        Update: Partial<Database["public"]["Tables"]["orders"]["Insert"]>
+      },
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          product_image: string | null
+          unit_price: number
+          quantity: number
+          total_price: number
+          created_at: string
+        }
+        Insert: Omit<Database["public"]["Tables"]["order_items"]["Row"], "id" | "created_at">
+        Update: Partial<Database["public"]["Tables"]["order_items"]["Insert"]>
       }
     }
     Views: {
@@ -103,6 +143,17 @@ export type Database = {
       [_ in never]: never
     }
   }
+}
+
+export interface AddressData {
+  name: string
+  email: string
+  phone?: string
+  street: string
+  city: string
+  state: string
+  postal_code: string
+  country: string
 }
 
 type PublicSchema = Database[Extract<keyof Database, "public">]

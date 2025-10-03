@@ -17,6 +17,8 @@ import GrowingGuidesPage from './pages/GrowingGuidesPage';
 import ShippingInfoPage from './pages/ShippingInfoPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminProductForm from './pages/admin/AdminProductForm';
@@ -98,7 +100,8 @@ function AppContent({
             <Route path="/shipping-info" element={<ShippingInfoPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            {console.log("App.tsx: /signup route rendered")}
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-confirmation/:orderId?" element={<OrderConfirmationPage />} />
             
             {/* Admin routes */}
             <Route path="/admin/*" element={
