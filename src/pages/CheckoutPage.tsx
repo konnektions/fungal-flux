@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   // Calculate full order total including tax and shipping
   const calculateOrderTotal = () => {
     const subtotal = getTotalPrice();
-    const shippingCost = subtotal >= 50 ? 0 : 0;
+    const shippingCost = 0;
     const taxAmount = subtotal * 0.08; // 8% tax
     return subtotal + shippingCost + taxAmount;
   };
