@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
@@ -67,6 +67,7 @@ function AppContent({
   handleProductClick: (product: Product) => void;
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavigate = (page: string, category?: string) => {
     if (page === 'shop' && category) {
@@ -97,6 +98,7 @@ function AppContent({
             <Route path="/shipping-info" element={<ShippingInfoPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+            {console.log("App.tsx: /signup route rendered")}
             
             {/* Admin routes */}
             <Route path="/admin/*" element={
