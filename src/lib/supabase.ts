@@ -4,18 +4,20 @@ import { demoProducts } from '../data/demoProducts'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Provide fallbacks for development
+if (!supabaseUrl || !supabaseAnonKey) {
+  if (import.meta.env.PROD) {
+    throw new Error('Supabase environment variables are not set. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.')
+  } else {
+    console.warn('Missing Supabase environment variables. Using fallback values for development.')
+    console.warn('Make sure to create a .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
+  }
+}
+
 const fallbackUrl = 'https://your-project-id.supabase.co'
 const fallbackKey = 'public-anon-key'
 
-// Use environment variables or fallbacks
 const url = supabaseUrl || fallbackUrl
 const key = supabaseAnonKey || fallbackKey
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Missing Supabase environment variables. Using fallback values for development.')
-  console.warn('Make sure to create a .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
-}
 
 export const supabase = createClient(url, key)
 
