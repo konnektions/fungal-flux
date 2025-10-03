@@ -33,8 +33,12 @@ export default function ProtectedRoute({
     return <Navigate to={`/login?returnTo=${location.pathname}`} replace />;
   }
 
-  // Check role permissions
+  // Check role permissions, only after loading is complete
   const hasPermission = () => {
+    if (loading) {
+      return false; // Prevent access until loading is complete
+    }
+
     switch (requiredRole) {
       case 'super_admin':
         return isSuperAdmin;

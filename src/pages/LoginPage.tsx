@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       return;
@@ -38,10 +38,43 @@ export default function LoginPage() {
         return;
       }
 
-      // Wait a moment for auth state to update, then navigate
-      setTimeout(() => {
-        navigate(returnTo);
-      }, 100);
+      // Wait for auth state to update and check user role
+      let attempts = 0;
+      const maxAttempts = 20; // 2 seconds max wait
+
+      const checkAuthAndNavigate = () => {
+        attempts++;
+
+        // Check if we have user data with role information
+        const userString = localStorage.getItem('user');
+        if (userString) {
+          try {
+            const user = JSON.parse(userString);
+            if (user && user.role) {
+              console.log('User role detected:', user.role);
+              if (user.role === 'admin' || user.role === 'super_admin') {
+                navigate('/admin');
+                return;
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+
+        // If we've tried enough times, redirect to default location
+        if (attempts >= maxAttempts) {
+          console.log('Max attempts reached, redirecting to:', returnTo);
+          navigate(returnTo);
+          return;
+        }
+
+        // Try again in 100ms
+        setTimeout(checkAuthAndNavigate, 100);
+      };
+
+      // Start checking after initial delay
+      setTimeout(checkAuthAndNavigate, 100);
 
     } catch (e) {
       if (e instanceof Error) {

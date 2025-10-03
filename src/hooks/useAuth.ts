@@ -135,19 +135,26 @@ export function useAuth() {
       const role = profile?.role || 'customer'
 
       console.log('[AUTH] Setting user with role:', role)
-      setUser({
+      const userData = {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
         full_name: profile?.full_name || supabaseUser.user_metadata?.full_name || null,
         avatar_url: profile?.avatar_url || supabaseUser.user_metadata?.avatar_url || null,
         role
-      })
-      setUserRole(role)
+      };
+      setUser(userData);
+      setUserRole(role);
+
+      // Store user data in localStorage for login redirect logic
+      localStorage.setItem('user', JSON.stringify(userData));
+
       console.log('[AUTH] User state updated')
     } else {
       console.log('[AUTH] Clearing user state')
       setUser(null)
       setUserRole('customer')
+      // Clear user data from localStorage
+      localStorage.removeItem('user')
     }
   }
 
