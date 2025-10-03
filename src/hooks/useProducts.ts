@@ -57,6 +57,23 @@ export function useProducts() {
         updated_at: new Date().toISOString(),
       };
 
+      console.log('Attempting to update product:', id);
+      console.log('Product data:', productData);
+
+      // First, let's check if we can read the product (to verify RLS permissions)
+      const { data: existingProduct, error: readError } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (readError) {
+        console.error('Cannot read product for update:', readError);
+        throw new Error(`Permission denied: ${readError.message}`);
+      }
+
+      console.log('Successfully read existing product:', existingProduct);
+
       const { data, error } = await supabase
         .from('products')
         .update(productData)
@@ -64,13 +81,18 @@ export function useProducts() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
+      }
 
+      console.log('Product updated successfully:', data);
       toast.success('Product updated successfully');
       return { success: true, data };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update product';
-      toast.error(errorMessage);
+      console.error('Update product error:', errorMessage);
+      toast.error(`Update failed: ${errorMessage}`);
       return { success: false, error };
     }
   };

@@ -78,12 +78,13 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Products are viewable by everyone" ON products
     FOR SELECT USING (true);
 
--- Only admins can insert/update/delete products
+-- Only admins can insert/update/delete products (fixed circular dependency)
 CREATE POLICY "Only admins can modify products" ON products
     FOR ALL USING (
-        auth.uid() IN (
-            SELECT user_id FROM profiles 
-            WHERE role IN ('admin', 'super_admin')
+        EXISTS (
+            SELECT 1 FROM profiles
+            WHERE user_id = auth.uid()
+            AND role IN ('admin', 'super_admin')
         )
     );
 

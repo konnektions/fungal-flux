@@ -18,6 +18,50 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(url, key)
 
+// Debug function to check current user and permissions
+export const debugAuth = async () => {
+  try {
+    // Get current session
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('Current session:', session);
+
+    if (session?.user) {
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      console.log('User profile:', profile);
+
+      // Test products table access
+      const { data: products, error: productsError } = await supabase
+        .from('products')
+        .select('*')
+        .limit(1);
+
+      console.log('Products access test:', { data: products, error: productsError });
+
+      return {
+        session,
+        profile,
+        productsAccess: { data: products, error: productsError }
+      };
+    }
+
+    return { session: null, profile: null, productsAccess: null };
+  } catch (error) {
+    console.error('Debug auth error:', error);
+    return { error };
+  }
+}
+
+// Make debug function available globally for troubleshooting
+if (typeof window !== 'undefined') {
+  (window as unknown as Window & { debugSupabaseAuth: typeof debugAuth }).debugSupabaseAuth = debugAuth;
+}
+
 // Helper functions unchanged...
 export const productService = {
   async getAll() {

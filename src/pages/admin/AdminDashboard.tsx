@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useDashboardStats } from '../../hooks/useDashboardStats';
 import {
@@ -8,12 +8,29 @@ import {
   TrendingUp,
   Eye,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Shield,
+  User
 } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, userRole, updateUserRole } = useAuth();
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
   const { totalProducts, lowStockCount, outOfStockCount, featuredCount, loading, error, refetch } = useDashboardStats();
+
+  const handleRoleUpdate = async (newRole: 'admin' | 'super_admin') => {
+    if (!user) return;
+
+    setIsUpdatingRole(true);
+    const result = await updateUserRole(user.id, newRole);
+
+    if (result.error) {
+      alert(`Failed to update role: ${result.error}`);
+    } else {
+      alert(`Role updated to ${newRole}. Page will refresh.`);
+    }
+    setIsUpdatingRole(false);
+  };
 
   const stats = [
     {
@@ -83,6 +100,53 @@ export default function AdminDashboard() {
         <p className="text-gray-600">
           Here's what's happening with your store today.
         </p>
+      </div>
+
+      {/* Role Management Section */}
+      <div className="mb-8 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-full ${
+              userRole === 'super_admin' ? 'bg-purple-100' :
+              userRole === 'admin' ? 'bg-blue-100' : 'bg-gray-100'
+            }`}>
+              <Shield className={`w-5 h-5 ${
+                userRole === 'super_admin' ? 'text-purple-600' :
+                userRole === 'admin' ? 'text-blue-600' : 'text-gray-600'
+              }`} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Current Role: {userRole === 'super_admin' ? 'Super Admin' :
+                              userRole === 'admin' ? 'Admin' : 'Customer'}
+              </h3>
+              <p className="text-sm text-gray-600">
+                Your current permission level in the system
+              </p>
+            </div>
+          </div>
+
+          {userRole !== 'super_admin' && (
+            <div className="flex gap-2">
+              {userRole === 'customer' && (
+                <button
+                  onClick={() => handleRoleUpdate('admin')}
+                  disabled={isUpdatingRole}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                >
+                  {isUpdatingRole ? 'Updating...' : 'Make Admin'}
+                </button>
+              )}
+              <button
+                onClick={() => handleRoleUpdate('super_admin')}
+                disabled={isUpdatingRole}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
+              >
+                {isUpdatingRole ? 'Updating...' : 'Make Super Admin'}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Error Banner */}
