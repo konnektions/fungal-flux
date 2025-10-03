@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
+  console.log("LoginPage component rendered");
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
